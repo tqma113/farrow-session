@@ -1,0 +1,5 @@
+{
+  "watch": ["src", "app.ts", "bar.ts", "foo.ts"],
+  "ext": "ts,tsx",
+  "exec": "node -r ts-node/register ./app.ts"
+}
