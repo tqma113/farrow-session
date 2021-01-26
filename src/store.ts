@@ -6,6 +6,8 @@ export interface Store extends EventEmitter {
   set: (sid: string, session: Session) => void
   touch: (sid: string, session: Session) => void
   destroy: (sid: string) => void
+  clear: () => void
+  length: () => number
 }
 
 export const createMemoryStore = (): Store => {
@@ -14,8 +16,6 @@ export const createMemoryStore = (): Store => {
 
   const get = (sid: string): SessionData | false => {
     const sessionDataStr = sessions[sid]
-
-    console.log(sessionDataStr)
 
     if (!sessionDataStr) {
       return false
@@ -28,7 +28,7 @@ export const createMemoryStore = (): Store => {
         const expires = typeof sessionData.cookie.expires === 'string'
           ? new Date(sessionData.cookie.expires)
           : sessionData.cookie.expires
-    
+        
         // destroy expired session
         if (expires && expires <= Date.now()) {
           destroy(sid)
@@ -59,5 +59,13 @@ export const createMemoryStore = (): Store => {
     delete sessions[sid]
   }
 
-  return Object.assign(emitter, { get, set, touch, destroy })
+  const clear = () => {
+    sessions = Object.create(null)
+  }
+
+  const length = () => {
+    return Object.keys(sessions).length
+  }
+
+  return Object.assign(emitter, { length, get, set, touch, destroy, clear })
 }

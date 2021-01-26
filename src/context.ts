@@ -26,6 +26,8 @@ export type Options = {
   store?: Store
 }
 
+export type StoreState = 'Woring' | 'Disconnect' | 'Block'
+
 const DEFAULT_NAME = 'connect.sid'
 
 const generateSessionId = () => {
@@ -47,13 +49,23 @@ export const createSessionContext = (options: Options) => {
     'secret option array must contain one or more strings'
   )
 
-  let storeReady = true
+  let storeState: StoreState = 'Woring'
+  store.on('work', () => {
+    storeState = 'Woring'
+  })
   store.on('disconnect', () => {
-    storeReady = false
+    storeState = 'Disconnect'
   })
-  store.on('connect', () => {
-    storeReady = true
+  store.on('block', () => {
+    storeState = 'Block'
   })
+
+  const waitStoreDisblock = () => {
+    return new Promise<StoreState>((resolve) => {
+      store.on('work', () => resolve('Woring'))
+      store.on('disconnect', () => resolve('Disconnect'))
+    })
+  }
 
   const sessionContext = createContext<Session | null>(null)
 
@@ -78,6 +90,8 @@ export const createSessionContext = (options: Options) => {
   const destory = () => {
     const session = sessionContext.get()
 
+    console.log('-----------destory-----------', session?.id)
+
     if (session !== null) {
       store.destroy(session.id)
       sessionContext.set(null)
@@ -94,6 +108,7 @@ export const createSessionContext = (options: Options) => {
   const touch = () => {
     const session = sessionContext.get()
 
+    console.log('-----------touch-----------', session?.id)
     if (session !== null) {
       session.touch()
     }
@@ -102,28 +117,25 @@ export const createSessionContext = (options: Options) => {
   }
 
   const provider = (): HttpMiddleware => {
-    const setCookie = (response: Response): Response => {
+    const setCookie = (): Response => {
       const session = sessionContext.get()
 
       if (session && session.cookie.secure) {
         const signed = signCookie(session.id, secret)
-        return response.cookie(name, signed, session.cookie.data)
+        return Response.cookie(name, signed, session.cookie.data)
       }
 
-      return response
+      return Response
     }
 
-    const end = async (response: Response): Promise<Response> => {
+    const end = async (): Promise<Response> => {
       const session = sessionContext.get()
 
       if (session) {
         session.save()
       }
 
-      const res = setCookie(response)
-      // clear brefore next request
-      sessionContext.set(null)
-      return res
+      return setCookie()
     }
 
     return async (request, next) => {
@@ -134,28 +146,41 @@ export const createSessionContext = (options: Options) => {
 
       // Handle connection as if there is no session if
       // the store has temporarily disconnected etc
-      if (!storeReady) {
-        warning(false, 'store is disconnected')
-        return end(await next())
+      switch (storeState) {
+        case 'Block': {
+          // wait for store disblock
+          if ('Woring' === await waitStoreDisblock()) {
+            break
+          }
+        }
+        case 'Disconnect': {
+          warning(false, 'store is disconnected')
+          return next()
+        }
+        // default StoreState.Working
       }
 
       // pathname mismatch TODO: If this is useful?
       if (request.pathname.indexOf(cookieOptions.path || '/') !== 0) {
-        return end(await next())
+        return next()
       }
 
       const sid = !!request.cookies && !!request.cookies[name] && unsignCookie(request.cookies[name], secret)
 
+
       if (sid) {
         const sessionData = store.get(sid)
+
         if (!!sessionData) {
           set(sessionData)
+        } else {
+          generate()
         }
       } else {
         generate()
       }
 
-      return end(await next())
+      return Response.merge(await end(), await next(request))
     }
   }
 
