@@ -1,5 +1,3 @@
-require('source-map-support').install()
-
 import { Response, createRouterPipeline } from 'farrow-http'
 import { createContainer } from 'farrow-pipeline'
 
