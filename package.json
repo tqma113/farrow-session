@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon",
-    "test": "jest --runInBand --forceExit --coverage",
+    "test": "jest --runInBand",
     "prettier": "prettier . --write"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "jest": "^26.6.3",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
+    "source-map-support": "^0.5.19",
     "tiny-invariant": "^1.1.0",
     "tiny-warning": "^1.0.3",
     "ts-jest": "^26.4.4",

@@ -1,5 +1,5 @@
 {
-  "watch": ["src", "app.ts", "bar.ts", "foo.ts"],
+  "watch": ["src", "example"],
   "ext": "ts,tsx",
-  "exec": "node -r ts-node/register ./app.ts"
+  "exec": "node -r ts-node/register ./example/demo.ts"
 }

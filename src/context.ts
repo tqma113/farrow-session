@@ -27,6 +27,7 @@ export type Options = {
 }
 
 export type StoreState = 'Woring' | 'Disconnect' | 'Block'
+export type StoreBlockResolver = (state: StoreState) => void
 
 const DEFAULT_NAME = 'connect.sid'
 
@@ -50,20 +51,26 @@ export const createSessionContext = (options: Options) => {
   )
 
   let storeState: StoreState = 'Woring'
+  let blockResolvers: StoreBlockResolver[] = []
   store.on('work', () => {
     storeState = 'Woring'
+    runStoreResolvers('Woring')
   })
   store.on('disconnect', () => {
     storeState = 'Disconnect'
+    runStoreResolvers('Disconnect')
   })
   store.on('block', () => {
     storeState = 'Block'
   })
 
+  const runStoreResolvers = (state: StoreState) => {
+    Promise.resolve().then(() => blockResolvers.forEach(resolve => resolve(state)))
+  }
+
   const waitStoreDisblock = () => {
     return new Promise<StoreState>((resolve) => {
-      store.on('work', () => resolve('Woring'))
-      store.on('disconnect', () => resolve('Disconnect'))
+      blockResolvers.push(resolve)
     })
   }
 
@@ -77,7 +84,7 @@ export const createSessionContext = (options: Options) => {
     return session
   }
 
-  const generate = () => {
+  const generate = async () => {
     const sid = generateId()
     const cookie = createCookie(cookieOptions)
     const session = createSession(sid, cookie, store)
@@ -89,8 +96,6 @@ export const createSessionContext = (options: Options) => {
 
   const destory = () => {
     const session = sessionContext.get()
-
-    console.log('-----------destory-----------', session?.id)
 
     if (session !== null) {
       store.destroy(session.id)
@@ -108,7 +113,6 @@ export const createSessionContext = (options: Options) => {
   const touch = () => {
     const session = sessionContext.get()
 
-    console.log('-----------touch-----------', session?.id)
     if (session !== null) {
       session.touch()
     }
@@ -139,6 +143,9 @@ export const createSessionContext = (options: Options) => {
     }
 
     return async (request, next) => {
+
+      await 123
+
       // self-awareness
       if (sessionContext.get()) {
         return next()
@@ -149,7 +156,9 @@ export const createSessionContext = (options: Options) => {
       switch (storeState) {
         case 'Block': {
           // wait for store disblock
+          console.log('------------block---------------', request.pathname)
           if ('Woring' === (await waitStoreDisblock())) {
+            console.log('------------work---------------', request.pathname)
             break
           }
         }
@@ -165,6 +174,8 @@ export const createSessionContext = (options: Options) => {
         return next()
       }
 
+      console.log('------------entry---------------', request.pathname)
+
       const sid =
         !!request.cookies &&
         !!request.cookies[name] &&
@@ -176,13 +187,15 @@ export const createSessionContext = (options: Options) => {
         if (!!sessionData) {
           set(sessionData)
         } else {
-          generate()
+          await generate()
         }
       } else {
-        generate()
+        await generate()
       }
 
-      return Response.merge(await end(), await next(request))
+      console.log('------------end------------', request.pathname, sessionContext.get()?.id)
+
+      return Response.merge(await next(request), await end())
     }
   }
 
