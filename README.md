@@ -144,37 +144,37 @@ Trust the reverse proxy when setting secure cookies (via the "X-Forwarded-Proto"
 
 Every session store must be an EventEmitter and implement specific methods. The following methods are the list of required, recommended, and optional.
 
-### store.get
+#### store.get
 
 > Type: `(sid: string) => SessionData | false`
 
 Get [SessionData](https://github.com/tqma113/farrow-session/blob/c765384cc957a2df0af2c921e02c33a9154c27c6/src/session.ts#L4) by session ID.
 
-### store.set
+#### store.set
 
 > Type: `(sid: string, session: Session) => void`
 
 Set `SessionData` for a new session.
 
-### store.touch
+#### store.touch
 
 > Type: `(sid: string, session: Session) => void`
 
 Upate expire time for the session.
 
-### store.destroy
+#### store.destroy
 
 > Type: `(sid: string) => void`
 
 Remove the session data for the session.
 
-### store.clear
+#### store.clear
 
 > Type: `() => void`
 
 Remove all the session data in this store.
 
-### store.length
+#### store.length
 
 > Type: `() => number`
 
