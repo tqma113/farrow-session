@@ -1,4 +1,3 @@
-
 import { createCookie } from '../src/cookie'
 
 describe('new Cookie()', function () {
@@ -57,8 +56,12 @@ describe('new Cookie()', function () {
         const expires = new Date(Date.now() + 60000)
         const cookie = createCookie({ expires: expires })
 
-        expect(expires.getTime() - Date.now() - 1000 <= cookie.maxAge!).toBeTruthy()
-        expect(expires.getTime() - Date.now() + 1000 >= cookie.maxAge!).toBeTruthy()
+        expect(
+          expires.getTime() - Date.now() - 1000 <= cookie.maxAge!
+        ).toBeTruthy()
+        expect(
+          expires.getTime() - Date.now() + 1000 >= cookie.maxAge!
+        ).toBeTruthy()
       })
     })
 
@@ -75,8 +78,12 @@ describe('new Cookie()', function () {
         const maxAge = 60000
         const cookie = createCookie({ maxAge: maxAge })
 
-        expect(cookie.expires!.getTime() - Date.now() - 1000 <= maxAge).toBeTruthy()
-        expect(cookie.expires!.getTime() - Date.now() + 1000 >= maxAge).toBeTruthy()
+        expect(
+          cookie.expires!.getTime() - Date.now() - 1000 <= maxAge
+        ).toBeTruthy()
+        expect(
+          cookie.expires!.getTime() - Date.now() + 1000 >= maxAge
+        ).toBeTruthy()
       })
 
       it('should set maxAge', function () {
@@ -98,8 +105,8 @@ describe('new Cookie()', function () {
     })
   })
 
-  describe("data", () => {
-    it("default", () => {
+  describe('data', () => {
+    it('default', () => {
       const cookie = createCookie()
       const data = cookie.data
 

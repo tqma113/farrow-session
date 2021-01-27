@@ -25,10 +25,11 @@ export const createMemoryStore = (): Store => {
       const sessionData = JSON.parse(sessionDataStr)
 
       if (sessionData.cookie) {
-        const expires = typeof sessionData.cookie.expires === 'string'
-          ? new Date(sessionData.cookie.expires)
-          : sessionData.cookie.expires
-        
+        const expires =
+          typeof sessionData.cookie.expires === 'string'
+            ? new Date(sessionData.cookie.expires)
+            : sessionData.cookie.expires
+
         // destroy expired session
         if (expires && expires <= Date.now()) {
           destroy(sid)

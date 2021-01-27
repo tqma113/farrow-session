@@ -31,7 +31,7 @@ export type StoreState = 'Woring' | 'Disconnect' | 'Block'
 const DEFAULT_NAME = 'connect.sid'
 
 const generateSessionId = () => {
-  return uuid();
+  return uuid()
 }
 
 export const createSessionContext = (options: Options) => {
@@ -41,9 +41,9 @@ export const createSessionContext = (options: Options) => {
   const generateId: GenID = options.genid || generateSessionId
 
   const store = options.store || createMemoryStore()
-  
+
   invariant(!!secret, 'secret is required')
-  
+
   invariant(
     !Array.isArray(secret) || secret.length !== 0,
     'secret option array must contain one or more strings'
@@ -149,7 +149,7 @@ export const createSessionContext = (options: Options) => {
       switch (storeState) {
         case 'Block': {
           // wait for store disblock
-          if ('Woring' === await waitStoreDisblock()) {
+          if ('Woring' === (await waitStoreDisblock())) {
             break
           }
         }
@@ -165,8 +165,10 @@ export const createSessionContext = (options: Options) => {
         return next()
       }
 
-      const sid = !!request.cookies && !!request.cookies[name] && unsignCookie(request.cookies[name], secret)
-
+      const sid =
+        !!request.cookies &&
+        !!request.cookies[name] &&
+        unsignCookie(request.cookies[name], secret)
 
       if (sid) {
         const sessionData = store.get(sid)
@@ -198,6 +200,6 @@ export const createSessionContext = (options: Options) => {
     refresh,
     touch,
     store,
-    provider
+    provider,
   }
 }

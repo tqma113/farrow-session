@@ -7,11 +7,11 @@ import { unsignCookie, signCookie } from '../src/sign'
 
 import { sleep } from './util'
 
-describe("session", () => {
+describe('session', () => {
   it('should do nothing if context has been inited', async () => {
     const pipeline = createRouterPipeline()
     const Session = createSessionContext({
-      secret: 'farrow'
+      secret: 'farrow',
     })
 
     pipeline.use((req, next) => {
@@ -22,12 +22,15 @@ describe("session", () => {
     pipeline.use(() => {
       return Response
     })
-    
-    const result = await pipeline.run({
-      pathname: '/foo',
-    }, { 
-      container: createContainer()
-    })
+
+    const result = await pipeline.run(
+      {
+        pathname: '/foo',
+      },
+      {
+        container: createContainer(),
+      }
+    )
     expect(result.info.cookies).toBeUndefined()
   })
 
@@ -35,19 +38,22 @@ describe("session", () => {
     const pipeline = createRouterPipeline()
     const Session = createSessionContext({
       secret: 'farrow',
-      name: 'session.id'
+      name: 'session.id',
     })
 
     pipeline.use(Session.provider())
     pipeline.use(() => {
       return Response
     })
-    
-    const result = await pipeline.run({
-      pathname: '/foo',
-    }, { 
-      container: createContainer()
-    })
+
+    const result = await pipeline.run(
+      {
+        pathname: '/foo',
+      },
+      {
+        container: createContainer(),
+      }
+    )
     expect(result.info.cookies).toBeDefined()
     if (result.info.cookies) {
       expect(result.info.cookies['session.id']).toBeDefined()
@@ -58,33 +64,39 @@ describe("session", () => {
     const pipeline = createRouterPipeline()
     const Session = createSessionContext({
       secret: 'farrow',
-      name: 'session.id'
+      name: 'session.id',
     })
 
     pipeline.use(Session.provider())
     pipeline.use(() => {
       return Response
     })
-    
-    const result = await pipeline.run({
-      pathname: '/foo',
-    }, { 
-      container: createContainer()
-    })
+
+    const result = await pipeline.run(
+      {
+        pathname: '/foo',
+      },
+      {
+        container: createContainer(),
+      }
+    )
     expect(result.info.cookies).toBeDefined()
 
     if (result.info.cookies) {
       expect(result.info.cookies['session.id']).toBeDefined()
 
       const cookie = result.info.cookies['session.id'].value
-      const result1 = await pipeline.run({
-        pathname: '/bar',
-        cookies: {
-          'session.id': cookie
+      const result1 = await pipeline.run(
+        {
+          pathname: '/bar',
+          cookies: {
+            'session.id': cookie,
+          },
+        },
+        {
+          container: createContainer(),
         }
-      }, { 
-        container: createContainer()
-      })
+      )
       expect(result1.info.cookies).toBeDefined()
       if (result1.info.cookies) {
         expect(result1.info.cookies['session.id']).toBeDefined()
@@ -97,7 +109,7 @@ describe("session", () => {
     const pipeline = createRouterPipeline()
     const Session = createSessionContext({
       secret: 'farrow',
-      name: 'session.id'
+      name: 'session.id',
     })
 
     pipeline.use(Session.provider())
@@ -105,26 +117,34 @@ describe("session", () => {
       return Response
     })
 
-    const result0 = await pipeline.run({
-      pathname: '/foo',
-    }, { 
-      container: createContainer()
-    })
+    const result0 = await pipeline.run(
+      {
+        pathname: '/foo',
+      },
+      {
+        container: createContainer(),
+      }
+    )
     expect(result0.info.cookies).toBeDefined()
     if (result0.info.cookies) {
       expect(result0.info.cookies['session.id']).toBeDefined()
       if (result0.info.cookies['session.id']) {
-        const result1 = await pipeline.run({
-          pathname: '/bar',
-        }, { 
-          container: createContainer()
-        })
+        const result1 = await pipeline.run(
+          {
+            pathname: '/bar',
+          },
+          {
+            container: createContainer(),
+          }
+        )
         expect(result1.info.cookies).toBeDefined()
 
         if (result1.info.cookies) {
           expect(result1.info.cookies['session.id']).toBeDefined()
-    
-          expect(result0.info.cookies['session.id'].value).not.toBe(result1.info.cookies['session.id'].value)
+
+          expect(result0.info.cookies['session.id'].value).not.toBe(
+            result1.info.cookies['session.id'].value
+          )
         }
       }
     }
@@ -136,20 +156,23 @@ describe("session", () => {
       secret: 'farrow',
       name: 'session.id',
       cookie: {
-        maxAge: 5000
-      }
+        maxAge: 5000,
+      },
     })
 
     pipeline.use(Session.provider())
     pipeline.use(() => {
       return Response
     })
-    
-    const result = await pipeline.run({
-      pathname: '/foo',
-    }, { 
-      container: createContainer()
-    })
+
+    const result = await pipeline.run(
+      {
+        pathname: '/foo',
+      },
+      {
+        container: createContainer(),
+      }
+    )
     expect(result.info.cookies).toBeDefined()
 
     if (result.info.cookies) {
@@ -158,20 +181,28 @@ describe("session", () => {
       await sleep(3000)
 
       const cookie = result.info.cookies['session.id'].value
-      const result1 = await pipeline.run({
-        pathname: '/bar',
-        cookies: {
-          'session.id': cookie
+      const result1 = await pipeline.run(
+        {
+          pathname: '/bar',
+          cookies: {
+            'session.id': cookie,
+          },
+        },
+        {
+          container: createContainer(),
         }
-      }, { 
-        container: createContainer()
-      })
+      )
       expect(result1.info.cookies).toBeDefined()
       if (result1.info.cookies) {
         expect(result1.info.cookies['session.id']).toBeDefined()
         expect(result1.info.cookies['session.id'].value).toBe(cookie)
-        expect(result1.info.cookies['session.id'].options.expires).not.toBe(result.info.cookies['session.id'].options.expires)
-        expect(result1.info.cookies['session.id'].options.expires.getTime() - Date.now()).toBeGreaterThan(3000)
+        expect(result1.info.cookies['session.id'].options.expires).not.toBe(
+          result.info.cookies['session.id'].options.expires
+        )
+        expect(
+          result1.info.cookies['session.id'].options.expires.getTime() -
+            Date.now()
+        ).toBeGreaterThan(3000)
       }
     }
   })
@@ -181,19 +212,22 @@ describe("session", () => {
       const pipeline = createRouterPipeline()
       const Session = createSessionContext({
         secret: 'farrow',
-        name: 'session.id'
+        name: 'session.id',
       })
 
       pipeline.use(Session.provider())
       pipeline.use(() => {
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeDefined()
       if (result.info.cookies) {
         expect(result.info.cookies['session.id']).toBeDefined()
@@ -201,14 +235,17 @@ describe("session", () => {
         Session.store.clear()
 
         const cookie = result.info.cookies['session.id'].value
-        const result1 = await pipeline.run({
-          pathname: '/bar',
-          cookies: {
-            'session.id': cookie
+        const result1 = await pipeline.run(
+          {
+            pathname: '/bar',
+            cookies: {
+              'session.id': cookie,
+            },
+          },
+          {
+            container: createContainer(),
           }
-        }, { 
-          container: createContainer()
-        })
+        )
         expect(result1.info.cookies).toBeDefined()
         if (result1.info.cookies) {
           expect(result1.info.cookies['session.id']).toBeDefined()
@@ -223,19 +260,22 @@ describe("session", () => {
       const pipeline = createRouterPipeline()
       const Session = createSessionContext({
         secret: 'farrow',
-        name: 'session.id'
+        name: 'session.id',
       })
 
       pipeline.use(Session.provider())
       pipeline.use(() => {
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeDefined()
       if (result.info.cookies) {
         expect(result.info.cookies['session.id']).toBeDefined()
@@ -245,14 +285,17 @@ describe("session", () => {
         const cookie = result.info.cookies['session.id'].value
         expect(typeof cookie).toBe('string')
         if (typeof cookie === 'string') {
-          const result1 = await pipeline.run({
-            pathname: '/bar',
-            cookies: {
-              'session.id': cookie.slice(2)
+          const result1 = await pipeline.run(
+            {
+              pathname: '/bar',
+              cookies: {
+                'session.id': cookie.slice(2),
+              },
+            },
+            {
+              container: createContainer(),
             }
-          }, { 
-            container: createContainer()
-          })
+          )
           expect(result1.info.cookies).toBeDefined()
           if (result1.info.cookies) {
             expect(result1.info.cookies['session.id']).toBeDefined()
@@ -270,20 +313,23 @@ describe("session", () => {
         secret: 'farrow',
         name: 'session.id',
         cookie: {
-          maxAge: 500
-        }
+          maxAge: 500,
+        },
       })
 
       pipeline.use(Session.provider())
       pipeline.use(() => {
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeDefined()
       if (result.info.cookies) {
         expect(result.info.cookies['session.id']).toBeDefined()
@@ -291,14 +337,17 @@ describe("session", () => {
         await sleep(1000)
 
         const cookie = result.info.cookies['session.id'].value
-        const result1 = await pipeline.run({
-          pathname: '/bar',
-          cookies: {
-            'session.id': cookie
+        const result1 = await pipeline.run(
+          {
+            pathname: '/bar',
+            cookies: {
+              'session.id': cookie,
+            },
+          },
+          {
+            container: createContainer(),
           }
-        }, { 
-          container: createContainer()
-        })
+        )
         expect(result1.info.cookies).toBeDefined()
         if (result1.info.cookies) {
           expect(result1.info.cookies['session.id']).toBeDefined()
@@ -313,20 +362,23 @@ describe("session", () => {
         secret: 'farrow',
         name: 'session.id',
         cookie: {
-          maxAge: 500
-        }
+          maxAge: 500,
+        },
       })
 
       pipeline.use(Session.provider())
       pipeline.use(() => {
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeDefined()
       if (result.info.cookies) {
         expect(result.info.cookies['session.id']).toBeDefined()
@@ -334,14 +386,17 @@ describe("session", () => {
         await sleep(1000)
 
         const cookie = result.info.cookies['session.id'].value
-        const result1 = await pipeline.run({
-          pathname: '/bar',
-          cookies: {
-            'session.id': cookie
+        const result1 = await pipeline.run(
+          {
+            pathname: '/bar',
+            cookies: {
+              'session.id': cookie,
+            },
+          },
+          {
+            container: createContainer(),
           }
-        }, { 
-          container: createContainer()
-        })
+        )
         expect(result1.info.cookies).toBeDefined()
         if (result1.info.cookies) {
           expect(result1.info.cookies['session.id']).toBeDefined()
@@ -364,19 +419,22 @@ describe("session", () => {
       const pipeline = createRouterPipeline()
       const Session = createSessionContext({
         secret: 'farrow',
-        name
+        name,
       })
 
       pipeline.use(Session.provider())
       pipeline.use(() => {
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeDefined()
       if (result.info.cookies) {
         expect(result.info.cookies[name]).toBeDefined()
@@ -388,9 +446,9 @@ describe("session", () => {
       const Session = createSessionContext({
         secret: 'farrow',
         name: 'session.id',
-        genid: () => 'foo'
+        genid: () => 'foo',
       })
-  
+
       pipeline.use((req, next) => {
         return next()
       })
@@ -398,15 +456,20 @@ describe("session", () => {
       pipeline.use(() => {
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeDefined()
       if (result.info.cookies) {
-        expect(result.info.cookies['session.id'].value).toBe(signCookie('foo', 'farrow'))
+        expect(result.info.cookies['session.id'].value).toBe(
+          signCookie('foo', 'farrow')
+        )
       }
     })
   })
@@ -415,86 +478,103 @@ describe("session", () => {
     it('should not be set if store is disconnected', async () => {
       const pipeline = createRouterPipeline()
       const Session = createSessionContext({
-        secret: 'farrow'
+        secret: 'farrow',
       })
 
       Session.store.emit('disconnect')
-  
+
       pipeline.use(Session.provider())
       pipeline.use(() => {
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeUndefined()
     })
 
     it('should be set when store reconnects', async () => {
       const pipeline = createRouterPipeline()
       const Session = createSessionContext({
-        secret: 'farrow'
+        secret: 'farrow',
       })
 
       Session.store.emit('disconnect')
-  
+
       pipeline.use(Session.provider())
       pipeline.use(() => {
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeUndefined()
 
       Session.store.emit('work')
 
-      const result1 = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+      const result1 = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result1.info.cookies).toBeDefined()
     })
 
     it('should not continue when store block until disblock', async () => {
       const pipeline = createRouterPipeline()
       const Session = createSessionContext({
-        secret: 'farrow'
+        secret: 'farrow',
       })
 
       Session.store.emit('block')
-  
+
       pipeline.use(Session.provider())
       pipeline.use((req) => {
         return Response.text(req.pathname)
       })
-      
+
       await Promise.all([
-        Promise.resolve(pipeline.run({
-          pathname: '/foo',
-        }, { 
-          container: createContainer()
-        })).then((result) => {
+        Promise.resolve(
+          pipeline.run(
+            {
+              pathname: '/foo',
+            },
+            {
+              container: createContainer(),
+            }
+          )
+        ).then((result) => {
           expect(result.info.cookies).toBeDefined()
         }),
         new Promise<void>(async (resolve) => {
           Session.store.emit('work')
 
-          const result1 = await pipeline.run({
-            pathname: '/bar',
-          }, { 
-            container: createContainer()
-          })
+          const result1 = await pipeline.run(
+            {
+              pathname: '/bar',
+            },
+            {
+              container: createContainer(),
+            }
+          )
           expect(result1.info.cookies).toBeDefined()
           resolve()
-        })
+        }),
       ])
     })
   })
@@ -504,9 +584,9 @@ describe("session", () => {
       const pipeline = createRouterPipeline()
       const Session = createSessionContext({
         secret: 'farrow',
-        name: 'session.id'
+        name: 'session.id',
       })
-      
+
       let needDestory = false
       pipeline.use(Session.provider())
       pipeline.use(() => {
@@ -517,26 +597,32 @@ describe("session", () => {
         }
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeDefined()
-  
+
       if (result.info.cookies) {
         expect(result.info.cookies['session.id']).toBeDefined()
-  
+
         const cookie = result.info.cookies['session.id'].value
-        const result1 = await pipeline.run({
-          pathname: '/bar',
-          cookies: {
-            'session.id': cookie
+        const result1 = await pipeline.run(
+          {
+            pathname: '/bar',
+            cookies: {
+              'session.id': cookie,
+            },
+          },
+          {
+            container: createContainer(),
           }
-        }, { 
-          container: createContainer()
-        })
+        )
         expect(result1.info.cookies).toBeDefined()
         if (result1.info.cookies) {
           expect(result1.info.cookies['session.id']).toBeDefined()
@@ -551,9 +637,9 @@ describe("session", () => {
       const pipeline = createRouterPipeline()
       const Session = createSessionContext({
         secret: 'farrow',
-        name: 'session.id'
+        name: 'session.id',
       })
-      
+
       let needRefresh = false
       pipeline.use(Session.provider())
       pipeline.use(() => {
@@ -564,26 +650,32 @@ describe("session", () => {
         }
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeDefined()
-  
+
       if (result.info.cookies) {
         expect(result.info.cookies['session.id']).toBeDefined()
-  
+
         const cookie = result.info.cookies['session.id'].value
-        const result1 = await pipeline.run({
-          pathname: '/bar',
-          cookies: {
-            'session.id': cookie
+        const result1 = await pipeline.run(
+          {
+            pathname: '/bar',
+            cookies: {
+              'session.id': cookie,
+            },
+          },
+          {
+            container: createContainer(),
           }
-        }, { 
-          container: createContainer()
-        })
+        )
         expect(result1.info.cookies).toBeDefined()
         if (result1.info.cookies) {
           expect(result1.info.cookies['session.id']).toBeDefined()
@@ -600,10 +692,10 @@ describe("session", () => {
         secret: 'farrow',
         name: 'session.id',
         cookie: {
-          maxAge: 5000
-        }
+          maxAge: 5000,
+        },
       })
-  
+
       pipeline.use(Session.provider())
       pipeline.use(async () => {
         await sleep(3000)
@@ -612,18 +704,24 @@ describe("session", () => {
 
         return Response
       })
-      
-      const result = await pipeline.run({
-        pathname: '/foo',
-      }, { 
-        container: createContainer()
-      })
+
+      const result = await pipeline.run(
+        {
+          pathname: '/foo',
+        },
+        {
+          container: createContainer(),
+        }
+      )
       expect(result.info.cookies).toBeDefined()
-  
+
       if (result.info.cookies) {
         expect(result.info.cookies['session.id']).toBeDefined()
-  
-        expect(result.info.cookies['session.id'].options.expires.getTime() - Date.now()).toBeGreaterThan(3000)
+
+        expect(
+          result.info.cookies['session.id'].options.expires.getTime() -
+            Date.now()
+        ).toBeGreaterThan(3000)
       }
     })
   })

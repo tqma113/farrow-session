@@ -2,12 +2,12 @@ import { CookieData, Cookie, createCookie } from './cookie'
 import { Store } from './store'
 
 export type SessionData = {
-  id: string,
-  cookie: CookieData,
+  id: string
+  cookie: CookieData
 }
 
 export type Session = SessionData & {
-  cookie: Cookie,
+  cookie: Cookie
   destroy: () => void
   reload: () => void
   save: () => void
@@ -16,18 +16,18 @@ export type Session = SessionData & {
 
 export const implSession = (
   sessionData: SessionData,
-  store: Store,
+  store: Store
 ): Session => {
   const originalMaxAge = sessionData.cookie.originalMaxAge
 
-  const cookie = createCookie(sessionData.cookie);
+  const cookie = createCookie(sessionData.cookie)
 
   // keep originalMaxAge intact
   cookie.originalMaxAge = originalMaxAge
 
-  const session = createSession(sessionData.id, cookie, store);
+  const session = createSession(sessionData.id, cookie, store)
 
-  return session;
+  return session
 }
 
 export const createSession = (
@@ -46,7 +46,7 @@ export const createSession = (
     if (sessionData) {
       implSession(sessionData, store)
     }
-    
+
     return session
   }
 
@@ -66,7 +66,7 @@ export const createSession = (
     destroy,
     reload,
     save,
-    touch
+    touch,
   }
 
   return session

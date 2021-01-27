@@ -2,13 +2,11 @@
 import crypto from 'crypto'
 
 export const sign = (input: string, secret: string) => {
-  return `${input}.${
-    crypto
-      .createHmac('sha256', secret)
-      .update(input)
-      .digest('base64')
-      .replace(/\=+$/, '')
-  }`
+  return `${input}.${crypto
+    .createHmac('sha256', secret)
+    .update(input)
+    .digest('base64')
+    .replace(/\=+$/, '')}`
 }
 
 export const unsign = (input: string, secret: string) => {
@@ -16,7 +14,9 @@ export const unsign = (input: string, secret: string) => {
   return crypto.timingSafeEqual(
     Buffer.from(sign(result, secret)),
     Buffer.from(input)
-  ) ? result : false
+  )
+    ? result
+    : false
 }
 
 export const signCookie = (input: string, secret: string) => {

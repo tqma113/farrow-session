@@ -21,19 +21,13 @@ module.exports = {
   collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: [
-    "**/src/**/*.{ts,tsx}",
-    "!**/node_modules/**"
-  ],
+  collectCoverageFrom: ['**/src/**/*.{ts,tsx}', '!**/node_modules/**'],
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
+  coverageDirectory: 'coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: [
-    "/node_modules/",
-    "/test/"
-  ],
+  coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -45,12 +39,12 @@ module.exports = {
 
   // An object that configures minimum threshold enforcement for coverage results
   coverageThreshold: {
-    "global": {
-      "branches": 0,
-      "functions": 0,
-      "lines": 0,
-      "statements": 0
-    }
+    global: {
+      branches: 0,
+      functions: 0,
+      lines: 0,
+      statements: 0,
+    },
   },
 
   // A path to a custom dependency extractor
@@ -139,7 +133,7 @@ module.exports = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: "node",
+  testEnvironment: 'node',
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -159,9 +153,7 @@ module.exports = {
   // ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
-  testRegex: [
-    "test/[a-zA-Z]+.(test|spec).ts$"
-  ],
+  testRegex: ['test/[a-zA-Z]+.(test|spec).ts$'],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,
@@ -176,8 +168,8 @@ module.exports = {
   // timers: "real",
 
   // A map from regular expressions to paths to transformers
-  "transform": {
-    ".(ts|tsx)": "ts-jest"
+  transform: {
+    '.(ts|tsx)': 'ts-jest',
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
