@@ -22,7 +22,7 @@ Unpublsihed
 
 ```ts
 import { Http, Response } from 'farrow-http'
-import { createSessionContext } from '../src'
+import { createSessionContext } from 'farrow-session'
 
 const http = Http()
 
