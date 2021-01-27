@@ -103,7 +103,7 @@ export const createCookie = (options: CookieOptions = {}): Cookie => {
   let sameSite = isValidSameSite(options.sameSite)
     ? options.sameSite
     : undefined
-  let secure = typeof options.secure === 'boolean' ? options.secure : true
+  let secure = typeof options.secure === 'boolean' ? options.secure : false
   let originalMaxAge =
     typeof options.originalMaxAge === 'number' ? options.originalMaxAge : maxAge
 

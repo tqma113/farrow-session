@@ -1,5 +1,5 @@
 import { createContext } from 'farrow-pipeline'
-import { HttpMiddleware, Response } from 'farrow-http'
+import { HttpMiddleware, Response, useReq } from 'farrow-http'
 import invariant from 'tiny-invariant'
 import warning from 'tiny-warning'
 import { v4 as uuid } from 'uuid'
@@ -24,6 +24,7 @@ export type Options = {
   name?: string
   secret: string
   store?: Store
+  proxy?: boolean
 }
 
 export type StoreState = 'Woring' | 'Disconnect' | 'Block'
@@ -40,6 +41,7 @@ export const createSessionContext = (options: Options) => {
   const name = options.name || DEFAULT_NAME
   const cookieOptions: CookieOptions = options.cookie || {}
   const generateId: GenID = options.genid || generateSessionId
+  const proxy = typeof options.proxy === 'boolean' ? options.proxy : true
 
   const store = options.store || createMemoryStore()
 
@@ -123,10 +125,26 @@ export const createSessionContext = (options: Options) => {
   }
 
   const provider = (): HttpMiddleware => {
+    const isSecure = () => {
+      if (!proxy) {
+        // TODO: farrow is not support https for now.
+        return false
+      }
+
+      const req = useReq()
+      const header = req.headers['x-forwarded-proto'] as string || '';
+      const index = header.indexOf(',');
+      const proto = index !== -1
+        ? header.substr(0, index).toLowerCase().trim()
+        : header.toLowerCase().trim()
+
+      return proto === 'https';
+    }
+
     const setCookie = (): Response => {
       const session = sessionContext.get()
 
-      if (session && session.cookie.secure) {
+      if (session && (!session.cookie.secure || isSecure())) {
         const signed = signCookie(session.id, secret)
         return Response.cookie(name, signed, session.cookie.data)
       }
@@ -134,7 +152,7 @@ export const createSessionContext = (options: Options) => {
       return Response
     }
 
-    const end = async (): Promise<Response> => {
+    const save = async (): Promise<Response> => {
       const session = sessionContext.get()
 
       if (session) {
@@ -145,8 +163,6 @@ export const createSessionContext = (options: Options) => {
     }
 
     return async (request, next) => {
-      await 123
-
       // self-awareness
       if (sessionContext.get()) {
         return next()
@@ -168,7 +184,7 @@ export const createSessionContext = (options: Options) => {
         // default StoreState.Working
       }
 
-      // pathname mismatch TODO: If this is useful?
+      // pathname mismatch TODO: If is this useful?
       if (request.pathname.indexOf(cookieOptions.path || '/') !== 0) {
         return next()
       }
@@ -190,7 +206,10 @@ export const createSessionContext = (options: Options) => {
         await generate()
       }
 
-      return Response.merge(await next(request), await end())
+      // `save` should exec after `next`, and Response.merge is order-sensitive
+      const nextRes = await next()
+      const saveRes = await save()
+      return Response.merge(saveRes, nextRes)
     }
   }
 

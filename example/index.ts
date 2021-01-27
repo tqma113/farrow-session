@@ -1,69 +1,17 @@
-import { Response, createRouterPipeline } from 'farrow-http'
-import { createContainer } from 'farrow-pipeline'
-
+import { Http, Response } from 'farrow-http'
 import { createSessionContext } from '../src'
 
-import { sleep } from '../test/util'
+const http = Http()
 
-const pipeline = createRouterPipeline()
 const Session = createSessionContext({
-  secret: 'farrow',
+  secret: 'farrow.session'
 })
 
-let isFrist = true
-pipeline.use(Session.provider())
-pipeline.use(async (req) => {
-  const id = Session.id
-  console.log('---------next--------', req.pathname, id)
-  if (isFrist) {
-    Session.store.emit('block')
+http.use(Session.provider())
 
-    await sleep(1000)
-
-    Session.store.emit('work')
-
-    isFrist = false
-  }
-  return Response.text(req.pathname)
+http.use(() => {
+  const sid = Session.id
+  return Response.text(`Hello world! ${sid}`)
 })
 
-Promise.all([
-  Promise.resolve(
-    pipeline.run(
-      {
-        pathname: '/foo',
-      },
-      {
-        container: createContainer(),
-      }
-    )
-  ).then((result) => {
-    // expect(result.info.cookies).toBeDefined()
-  }),
-  Promise.resolve(
-    pipeline.run(
-      {
-        pathname: '/bar',
-      },
-      {
-        container: createContainer(),
-      }
-    )
-  ).then((result) => {
-    // expect(result.info.cookies).toBeDefined()
-  }),
-  Promise.resolve(
-    pipeline.run(
-      {
-        pathname: '/baz',
-      },
-      {
-        container: createContainer(),
-      }
-    )
-  ).then((result) => {
-    // expect(result.info.cookies).toBeDefined()
-  }),
-])
-
-process.on('unhandledRejection', console.log)
+http.listen(3600)
