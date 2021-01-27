@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
-    "noEmit": true,
+    "outDir": "dist",
+    "declaration": true,
     "target": "es5",
     "inlineSourceMap": true,
     "module": "commonjs",
@@ -19,8 +20,8 @@
     "esModuleInterop": true,
     "removeComments": false,
     "jsx": "react",
-    "lib": ["esnext", "dom.iterable", "dom"],
-    "rootDir": "."
+    "lib": ["esnext"],
+    "rootDir": "src"
   },
-  "exclude": ["dist"]
+  "include": ["src"]
 }

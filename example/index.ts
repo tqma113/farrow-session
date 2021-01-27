@@ -1,4 +1,4 @@
-require('source-map-support').install();
+require('source-map-support').install()
 
 import { Response, createRouterPipeline } from 'farrow-http'
 import { createContainer } from 'farrow-pipeline'
@@ -68,4 +68,4 @@ Promise.all([
   }),
 ])
 
-process.on('unhandledRejection', console.log);
+process.on('unhandledRejection', console.log)

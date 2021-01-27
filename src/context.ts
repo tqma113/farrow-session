@@ -65,7 +65,9 @@ export const createSessionContext = (options: Options) => {
   })
 
   const runStoreResolvers = (state: StoreState) => {
-    Promise.resolve().then(() => blockResolvers.forEach(resolve => resolve(state)))
+    Promise.resolve().then(() =>
+      blockResolvers.forEach((resolve) => resolve(state))
+    )
   }
 
   const waitStoreDisblock = () => {
@@ -143,7 +145,6 @@ export const createSessionContext = (options: Options) => {
     }
 
     return async (request, next) => {
-
       await 123
 
       // self-awareness
@@ -156,9 +157,7 @@ export const createSessionContext = (options: Options) => {
       switch (storeState) {
         case 'Block': {
           // wait for store disblock
-          console.log('------------block---------------', request.pathname)
           if ('Woring' === (await waitStoreDisblock())) {
-            console.log('------------work---------------', request.pathname)
             break
           }
         }
@@ -173,8 +172,6 @@ export const createSessionContext = (options: Options) => {
       if (request.pathname.indexOf(cookieOptions.path || '/') !== 0) {
         return next()
       }
-
-      console.log('------------entry---------------', request.pathname)
 
       const sid =
         !!request.cookies &&
@@ -192,8 +189,6 @@ export const createSessionContext = (options: Options) => {
       } else {
         await generate()
       }
-
-      console.log('------------end------------', request.pathname, sessionContext.get()?.id)
 
       return Response.merge(await next(request), await end())
     }
