@@ -13,18 +13,19 @@ Unpublsihed
 ## Frist Look
 
 ```ts
-import { Http, Response } from 'farrow-http'
+import { Http, Response, Router } from 'farrow-http'
 import { createSessionContext } from 'farrow-session'
 
 const http = Http()
+const user = Router()
 
 const Session = createSessionContext({
   secret: 'farrow.session'
 })
 
-http.use(Session.provider())
+http.route('/user').use(Session.provider()).use(user)
 
-http.match({
+user.match({
     url: '/',
     method: ['GET', 'POST'],
   })
