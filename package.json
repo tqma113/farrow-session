@@ -1,6 +1,6 @@
 {
   "name": "farrow-session",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A session middleware for farrow.",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
