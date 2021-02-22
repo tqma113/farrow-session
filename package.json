@@ -1,8 +1,19 @@
 {
   "name": "farrow-session",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "A session middleware for farrow.",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "AUTHORS"
+  ],
   "license": "MIT",
+  "author": "Ma Tianqi(mtq1997@126.com)",
+  "bugs": {
+    "url": "https://github.com/tqma113/farrow-session/issues"
+  },
+  "homepage": "https://github.com/tqma113/farrow-session#readme",
   "scripts": {
     "start": "farrow dev",
     "test": "jest --runInBand",
