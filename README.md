@@ -1,5 +1,6 @@
 # farrow-session
 
+[![NPM](https://img.shields.io/npm/v/farrow-session.svg)](https://www.npmjs.com/package/farrow-session)
 [![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)](https://github.com/tqma113/farrow-session#readme)
 [![Action Status](https://github.com/tqma113/farrow-session/workflows/Test/badge.svg)](https://github.com/tqma113/farrow-session/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/tqma/farrow-session/blob/master/LICENSE)
