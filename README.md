@@ -5,7 +5,7 @@
 [![Action Status](https://github.com/tqma113/farrow-session/workflows/Test/badge.svg)](https://github.com/tqma113/farrow-session/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/tqma/farrow-session/blob/master/LICENSE)
 
-A session middleware for farrow.
+A session middleware for [farrow](https://github.com/Lucifier129/farrow).
 
 ## Install
 
