@@ -126,12 +126,18 @@ export const createSessionContext = (options: Options) => {
 
   const provider = (): HttpMiddleware => {
     const isSecure = () => {
+      const req = useReq()
+
+      // socket is tls.TLSSocket of https server
+      // @ts-ignore
+      if(req.socket.encrypted) {
+        return true
+      }
+
       if (!proxy) {
-        // TODO: farrow is not support https for now.
         return false
       }
 
-      const req = useReq()
       const header = req.headers['x-forwarded-proto'] as string || '';
       const index = header.indexOf(',');
       const proto = index !== -1
