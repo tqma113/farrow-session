@@ -5,12 +5,13 @@ const http = Http()
 const user = Router()
 
 const Session = createSessionContext({
-  secret: 'farrow.session'
+  secret: 'farrow.session',
 })
 
 http.route('/user').use(Session.provider()).use(user)
 
-user.match({
+user
+  .match({
     url: '/',
     method: ['GET', 'POST'],
   })

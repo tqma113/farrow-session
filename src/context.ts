@@ -130,7 +130,7 @@ export const createSessionContext = (options: Options) => {
 
       // socket is tls.TLSSocket of https server
       // @ts-ignore
-      if(req.socket.encrypted) {
+      if (req.socket.encrypted) {
         return true
       }
 
@@ -138,13 +138,14 @@ export const createSessionContext = (options: Options) => {
         return false
       }
 
-      const header = req.headers['x-forwarded-proto'] as string || '';
-      const index = header.indexOf(',');
-      const proto = index !== -1
-        ? header.substr(0, index).toLowerCase().trim()
-        : header.toLowerCase().trim()
+      const header = (req.headers['x-forwarded-proto'] as string) || ''
+      const index = header.indexOf(',')
+      const proto =
+        index !== -1
+          ? header.substr(0, index).toLowerCase().trim()
+          : header.toLowerCase().trim()
 
-      return proto === 'https';
+      return proto === 'https'
     }
 
     const setCookie = (): Response => {

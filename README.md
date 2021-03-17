@@ -21,12 +21,13 @@ const http = Http()
 const user = Router()
 
 const Session = createSessionContext({
-  secret: 'farrow.session'
+  secret: 'farrow.session',
 })
 
 http.route('/user').use(Session.provider()).use(user)
 
-user.match({
+user
+  .match({
     url: '/',
     method: ['GET', 'POST'],
   })
@@ -102,9 +103,9 @@ Note If both expires and maxAge are set in the options, then the last one define
 
 Specifies the string to be the value for the SameSite Set-Cookie attribute.
 
-+ 'Lax' will set the `SameSite` attribute to `Lax` for lax same site enforcement.
-+ 'None' will set the `SameSite` attribute to `None` for an explicit cross-site cookie.
-+ 'Strict' will set the `SameSite` attribute to `Strict` for strict same site enforcement.
+- 'Lax' will set the `SameSite` attribute to `Lax` for lax same site enforcement.
+- 'None' will set the `SameSite` attribute to `None` for an explicit cross-site cookie.
+- 'Strict' will set the `SameSite` attribute to `Strict` for strict same site enforcement.
 
 Detail at [SameSite](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Set-Cookie/SameSite)
 
