@@ -9,7 +9,11 @@ A session middleware for [farrow](https://github.com/Lucifier129/farrow).
 
 ## Install
 
-Unpublsihed
+```sh
+npm install farrow-session
+
+yarn add farrow-session
+```
 
 ## Frist Look
 
